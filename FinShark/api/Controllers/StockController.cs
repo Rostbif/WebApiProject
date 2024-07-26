@@ -17,10 +17,12 @@ namespace api.Controllers
     public class StockController : ControllerBase
     {
         private readonly IStockRepository _stockRepo;
+        private readonly ICommentRepository _commentRepo;
 
-        public StockController(IStockRepository stockRepo)
+        public StockController(IStockRepository stockRepo, ICommentRepository commentRepo)
         {
             _stockRepo = stockRepo;
+            _commentRepo = commentRepo;
         }
 
         [HttpGet]
