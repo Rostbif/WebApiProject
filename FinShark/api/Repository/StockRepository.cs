@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Stock;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -40,9 +41,45 @@ namespace api.Repository
             return stockModel;
         }
 
-        public async Task<List<Stock>> GetAllAsync()
+        public async Task<List<Stock>> GetAllAsync(QueryObject query)
         {
-            return await _context.Stocks.Include(s => s.Comments).ToListAsync();
+            //return await _context.Stocks.Include(s => s.Comments).ToListAsync();
+            var basicQuery = _context.Stocks.Include(s => s.Comments).AsQueryable();
+            if (!string.IsNullOrWhiteSpace(query.Symbol))
+            {
+                basicQuery = basicQuery.Where(s => s.Symbol.Contains(query.Symbol));
+            }
+            if (!string.IsNullOrWhiteSpace(query.CompanyName))
+            {
+                basicQuery = basicQuery.Where(s => s.CompanyName.Contains(query.CompanyName));
+            }
+            if (!string.IsNullOrWhiteSpace(query.SortBy))
+            {
+                // it's interesting if we can use that to implement a generic sort by...
+                // var properyToSortBy = typeof(Stock).GetProperties().FirstOrDefault(p => p.Name.Equals(query.sortBy));
+                // if (properyToSortBy != null)
+                // {
+                //     Console.WriteLine("The Property:", properyToSortBy.Name);
+                //     var basicQuery2 = _context.Stocks.Include(s => s.Comments).AsQueryable().
+                //     OrderBy(s => properyToSortBy.Name).ToList();
+                //     var x = 1;
+                // }
+
+                if (query.SortBy.Equals("Symbol", StringComparison.OrdinalIgnoreCase))
+                {
+                    basicQuery = query.IsDesc ?
+                    basicQuery.OrderByDescending(s => s.Symbol) :
+                    basicQuery.OrderBy(s => s.Symbol);
+                }
+
+            }
+
+            var stocksToReturn = await basicQuery
+            .Skip((query.PageNumber - 1) * query.PageSize)
+            .Take(query.PageSize)
+            .ToListAsync();
+
+            return stocksToReturn;
         }
 
         public async Task<Stock?> GetByIdAsync(int id)
