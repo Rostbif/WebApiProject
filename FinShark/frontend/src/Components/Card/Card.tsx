@@ -1,7 +1,7 @@
-import { SyntheticEvent } from "react";
+import React, { SyntheticEvent } from "react";
+import "./Card.css";
 import { CompanySearch } from "../../company";
 import AddPortfolio from "../Portfolio/AddPortfolio/AddPortfolio";
-import "./Card.css";
 
 interface Props {
   id: string;
@@ -9,27 +9,22 @@ interface Props {
   onPortfolioCreate: (e: SyntheticEvent) => void;
 }
 
-const Card = ({ id, searchResult, onPortfolioCreate }: Props) => {
+const Card: React.FC<Props> = ({
+  id,
+  searchResult,
+  onPortfolioCreate,
+}: Props): JSX.Element => {
   return (
-    // not sure that we need the id here...
-    <div key={id} id={id} className="card">
-      {searchResult.symbol}
-      <div className="details">
-        <img
-          src="https://media.licdn.com/dms/image/C5603AQFer4MgjR4H3g/profile-displayphoto-shrink_800_800/0/1604240402500?e=1728518400&v=beta&t=95rCukFiO3Rp4QPnS1EeWrAxbl366UyhGSGKSYT-Y70"
-          alt="Company Logo"
-          style={{
-            color: "red",
-            borderRadius: "50%",
-            width: "200px",
-            height: "200px",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.19)",
-          }}
-        />
-        <h2>{searchResult.name}</h2>
-        <p> ${searchResult.currency} </p>
-      </div>
-      <p className="info">
+    <div
+      className="flex flex-col items-center justify-between w-full p-6 bg-slate-100 rounded-lg md:flex-row"
+      key={id}
+      id={id}
+    >
+      <h2 className="font-bold text-center text-veryDarkViolet md:text-left">
+        {searchResult.name} ({searchResult.symbol})
+      </h2>
+      <p className="text-veryDarkBlue">{searchResult.currency}</p>
+      <p className="font-bold text-veryDarkBlue">
         {searchResult.exchangeShortName} - {searchResult.stockExchange}
       </p>
       <AddPortfolio
@@ -39,4 +34,5 @@ const Card = ({ id, searchResult, onPortfolioCreate }: Props) => {
     </div>
   );
 };
+
 export default Card;

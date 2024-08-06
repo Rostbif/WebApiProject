@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, SyntheticEvent } from "react";
+import React, { ChangeEvent, useState, SyntheticEvent, FormEvent } from "react";
 
 interface Props {
   onSearchSubmit: (e: SyntheticEvent) => void;
@@ -6,14 +6,28 @@ interface Props {
   handleSearchChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Search = ({ onSearchSubmit, handleSearchChange, search }: Props) => {
+const Search: React.FC<Props> = ({
+  onSearchSubmit,
+  search,
+  handleSearchChange,
+}: Props): JSX.Element => {
   return (
-    <form onSubmit={onSearchSubmit}>
-      {/* we don't need to use the complete arrow function form unless we have a good reason. 
-        It's less efficient as it creates a new function in every render */}
-      <input value={search} onChange={handleSearchChange}></input>
-      <button type="submit"> Submit </button>
-    </form>
+    <section className="relative bg-gray-100">
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <form
+          className="form relative flex flex-col w-full p-10 space-y-4 bg-darkBlue rounded-lg md:flex-row md:space-y-0 md:space-x-3"
+          onSubmit={onSearchSubmit}
+        >
+          <input
+            className="flex-1 p-3 border-2 rounded-lg placeholder-black focus:outline-none"
+            id="search-input"
+            placeholder="Search companies"
+            value={search}
+            onChange={handleSearchChange}
+          ></input>
+        </form>
+      </div>
+    </section>
   );
 };
 
