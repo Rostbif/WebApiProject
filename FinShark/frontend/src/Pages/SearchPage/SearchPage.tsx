@@ -6,6 +6,7 @@ import ListPortfolio from "../../Components/Portfolio/ListPortfolio/ListPortfoli
 import Search from "../../Components/Search/Search";
 import { CompanySearch } from "../../company";
 import { searchCompanies } from "../../api";
+import Spinner from "../../Components/Spinners/Spinner";
 
 interface Props {}
 
@@ -14,6 +15,7 @@ const SearchPage = (props: Props) => {
   const [portfolioValues, setPortfolioValues] = useState<string[]>([]);
   const [searchResult, setSearchResult] = useState<CompanySearch[]>([]);
   const [serverError, setServerError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -22,13 +24,15 @@ const SearchPage = (props: Props) => {
   // I can use here also SyntheticEvent
   const onSearchSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     const result = await searchCompanies(search);
     if (typeof result === "string") {
       setServerError(result);
     } else if (Array.isArray(result.data)) {
       setSearchResult(result.data);
-      // clearing the error if there was one
       setServerError("");
+      setIsLoading(false);
+      // clearing the error if there was one
     }
     console.log(searchResult);
   };
@@ -56,7 +60,7 @@ const SearchPage = (props: Props) => {
 
   return (
     <div className="App">
-      <Hero />
+      {/* <Hero /> */}
       <Search
         onSearchSubmit={onSearchSubmit}
         handleSearchChange={handleSearchChange}
@@ -66,11 +70,11 @@ const SearchPage = (props: Props) => {
         portfolioValues={portfolioValues}
         onPortfolioDelete={onPortfolioDelete}
       />
-
       <CardList
         searchResult={searchResult}
         onPortfolioCreate={onPortfolioCreate}
       />
+      {isLoading && <Spinner />}
       {serverError && <h1>{serverError}</h1>}
     </div>
   );
