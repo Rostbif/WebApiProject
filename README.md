@@ -1,2 +1,2 @@
 # WebApiProject
-Practicing C# and WebApi tech 
+Practicing React and .net WebApi technologies
